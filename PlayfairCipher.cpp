@@ -11,40 +11,14 @@ PlayfairCipher::PlayfairCipher(std::string message, std::string keyword)
 }
 
 std::string PlayfairCipher::Encrypt() {
-    std::string result{};
-
-    std::for_each(m_Message.begin(), m_Message.end(), [=, &result](std::pair<char, char>& p) {
-        //calculate indices
-        auto result1{std::find(m_PolybiusSquare.begin(), m_PolybiusSquare.end(), p.first)};
-        int index1{int(std::distance(m_PolybiusSquare.begin(), result1))};
-
-        auto result2{std::find(m_PolybiusSquare.begin(), m_PolybiusSquare.end(), p.second)};
-        int index2{int(std::distance(m_PolybiusSquare.begin(), result2))};
-        
-        int row1{GetRow(index1)};
-        int row2{GetRow(index2)};
-        int column1{GetColumn(index1)};
-        int column2{GetColumn(index2)};
-        
-        if(row1 == row2) {
-            //if rows are equal
-            result.push_back(m_PolybiusSquare.at(GetIndex(row1, (column1 == 5) ? 1 : column1 + 1)));
-            result.push_back(m_PolybiusSquare.at(GetIndex(row2, (column2 == 5) ? 1 : column2 + 1)));
-        } else if(column1 == column2) {
-            //if columns are equal
-            result.push_back(m_PolybiusSquare.at(GetIndex((row1 == 5) ? 1 : row1 + 1, column1)));
-            result.push_back(m_PolybiusSquare.at(GetIndex((row2 == 5) ? 1 : row2 + 1, column2)));
-        } else {
-            //if columns and rows are not equal
-            result.push_back(m_PolybiusSquare.at(GetIndex(row1, column2)));
-            result.push_back(m_PolybiusSquare.at(GetIndex(row2, column1)));
-        }
-    });
-
-    return result;
+    return Run(Mode::Encrypt);
 }
 
 std::string PlayfairCipher::Decrypt() {
+    return Run(Mode::Decrypt);
+}
+
+std::string PlayfairCipher::Run(Mode mode) {
     std::string result{};
 
     std::for_each(m_Message.begin(), m_Message.end(), [=, &result](std::pair<char, char>& p) {
@@ -62,12 +36,24 @@ std::string PlayfairCipher::Decrypt() {
         
         if(row1 == row2) {
             //if rows are equal
-            result.push_back(m_PolybiusSquare.at(GetIndex(row1, (column1 == 1) ? 5 : column1 - 1)));
-            result.push_back(m_PolybiusSquare.at(GetIndex(row2, (column2 == 1) ? 5 : column2 - 1)));
+            if(mode == Mode::Encrypt) {
+                result.push_back(m_PolybiusSquare.at(GetIndex(row1, (column1 == 5) ? 1 : column1 + 1)));
+                result.push_back(m_PolybiusSquare.at(GetIndex(row2, (column2 == 5) ? 1 : column2 + 1)));
+            }
+            else if(mode == Mode::Decrypt) {
+                result.push_back(m_PolybiusSquare.at(GetIndex(row1, (column1 == 1) ? 5 : column1 - 1)));
+                result.push_back(m_PolybiusSquare.at(GetIndex(row2, (column2 == 1) ? 5 : column2 - 1)));
+            }
+            
         } else if(column1 == column2) {
             //if columns are equal
-            result.push_back(m_PolybiusSquare.at(GetIndex((row1 == 1) ? 5 : row1 - 1, column1)));
-            result.push_back(m_PolybiusSquare.at(GetIndex((row2 == 1) ? 5 : row2 - 1, column2)));
+            if(mode == Mode::Encrypt) {
+                result.push_back(m_PolybiusSquare.at(GetIndex((row1 == 5) ? 1 : row1 + 1, column1)));
+                result.push_back(m_PolybiusSquare.at(GetIndex((row2 == 5) ? 1 : row2 + 1, column2)));
+            } else if(mode == Mode::Decrypt) {
+                result.push_back(m_PolybiusSquare.at(GetIndex((row1 == 1) ? 5 : row1 - 1, column1)));
+                result.push_back(m_PolybiusSquare.at(GetIndex((row2 == 1) ? 5 : row2 - 1, column2)));
+            }
         } else {
             //if columns and rows are not equal
             result.push_back(m_PolybiusSquare.at(GetIndex(row1, column2)));

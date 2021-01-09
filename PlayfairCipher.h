@@ -3,6 +3,11 @@
 #include <unordered_set>
 
 class PlayfairCipher{
+    enum class Mode{
+        Encrypt,
+        Decrypt
+    };
+
     public:
         PlayfairCipher(std::string message, std::string keyword);
         std::string Encrypt();
@@ -14,6 +19,7 @@ class PlayfairCipher{
 
         void InitializeMessage(std::string message);
         void InitializePolybiusSquare(std::string keyword);
+        std::string Run(Mode mode);
 
         int GetRow(int index);
         int GetColumn(int index);

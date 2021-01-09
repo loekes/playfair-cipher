@@ -3,8 +3,8 @@
 #include "PlayfairCipher.h"
 
 int main() {
-    std::string key{"cage"};
-    std::string phrase{"Nicolas Cage is the best actor in Hollywood!"};
+    std::string key{"death"};
+    std::string phrase{"LABOULAYE LADY WILL LEAD TO CIBOLA TEMPLES OF GOLD"};
     PlayfairCipher p{phrase, key};
 
     std::string encrypted{p.Encrypt()};
