@@ -4,24 +4,24 @@
 #include <numeric>
 #include <algorithm>
 
-PlayfairCipher::PlayfairCipher(std::string message, std::string keyword)
+PlayfairCipher::PlayfairCipher(const std::string& message, const std::string& keyword)
 {
     InitializeMessage(message);
     InitializePolybiusSquare(keyword);
 }
 
-std::string PlayfairCipher::Encrypt() {
+std::string PlayfairCipher::Encrypt() const {
     return Run(Mode::Encrypt);
 }
 
-std::string PlayfairCipher::Decrypt() {
+std::string PlayfairCipher::Decrypt() const {
     return Run(Mode::Decrypt);
 }
 
-std::string PlayfairCipher::Run(Mode mode) {
+std::string PlayfairCipher::Run(Mode mode) const {
     std::string result{};
 
-    std::for_each(m_Message.begin(), m_Message.end(), [=, &result](std::pair<char, char>& p) {
+    std::for_each(m_Message.begin(), m_Message.end(), [&](const std::pair<char, char>& p) {
         //calculate indices
         auto result1{std::find(m_PolybiusSquare.begin(), m_PolybiusSquare.end(), p.first)};
         int index1{int(std::distance(m_PolybiusSquare.begin(), result1))};
@@ -69,35 +69,36 @@ void PlayfairCipher::SetMessage(std::string message) {
     InitializeMessage(message);
 }
 
-void PlayfairCipher::InitializeMessage(std::string message) {
+void PlayfairCipher::InitializeMessage(const std::string& message) {
+    std::string tmpMessage{message};
     //to lower
-    std::transform(message.begin(), message.end(), message.begin(), [](char c){ 
+    std::transform(tmpMessage.begin(), tmpMessage.end(), tmpMessage.begin(), [](char c){ 
             return std::tolower(c); 
     });
     //remove non alpha characters
-    message.erase(std::remove_if(message.begin(), message.end(), [](char c) {
+    tmpMessage.erase(std::remove_if(tmpMessage.begin(), tmpMessage.end(), [](char c) {
         return !(std::isalpha(c));
-    }), message.end());
+    }), tmpMessage.end());
 
-    for(size_t i{}; i < message.size(); ++i) {
-        if(i < message.size() - 1) {
-            if(message[i] == message[i + 1]) {
-                char c1 = message[i];
+    for(size_t i{}; i < tmpMessage.size(); ++i) {
+        if(i < tmpMessage.size() - 1) {
+            if(tmpMessage[i] == tmpMessage[i + 1]) {
+                char c1 = tmpMessage[i];
                 m_Message.push_back({c1, 'x'});
             } else {
-                char c1 = message[i];
-                char c2 = message[i + 1];
+                char c1 = tmpMessage[i];
+                char c2 = tmpMessage[i + 1];
                 m_Message.push_back({c1, c2});
                 ++i;
             }
         } else {
-            char c1 = message[i];
+            char c1 = tmpMessage[i];
             m_Message.push_back({c1, 'x'});
         }
     }
 }
 
-void PlayfairCipher::InitializePolybiusSquare(std::string keyword) {
+void PlayfairCipher::InitializePolybiusSquare(const std::string& keyword) {
     //remove double letters
     std::string formattedKeyword{};
     std::for_each(keyword.begin(), keyword.end(), [&formattedKeyword](char c){ 
@@ -117,7 +118,7 @@ void PlayfairCipher::InitializePolybiusSquare(std::string keyword) {
     //remove j and y (i represents i, j and y)
     alphabet.erase(std::remove(alphabet.begin(), alphabet.end(), 'j'), alphabet.end());
 
-    std::for_each(alphabet.begin(), alphabet.end(), [=](char c) {
+    std::for_each(alphabet.begin(), alphabet.end(), [&](char c) {
         if(std::find(m_PolybiusSquare.begin(), m_PolybiusSquare.end(), c) == m_PolybiusSquare.end()) {
             //not yet in there
             m_PolybiusSquare.push_back(c);
@@ -125,15 +126,14 @@ void PlayfairCipher::InitializePolybiusSquare(std::string keyword) {
     });
 }
 
-int PlayfairCipher::GetRow(int index) {
+int PlayfairCipher::GetRow(int index) const {
     return index / 5 + 1;
 }
 
-int PlayfairCipher::GetColumn(int index) {
+int PlayfairCipher::GetColumn(int index) const {
     return index % 5 + 1;
 }
 
-int PlayfairCipher::GetIndex(int row, int column) {
-    return ((row -1) * 5) + (column - 1);
+int PlayfairCipher::GetIndex(int row, int column) const {
+    return ((row - 1) * 5) + (column - 1);
 }
-
