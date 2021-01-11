@@ -3,8 +3,9 @@
 #include "PlayfairCipher.h"
 
 int main() {
-    std::string key{"jarthur"};
+    std::string key{"zajrthur"};
     std::string message{"jay am cool!"};
+    
     PlayfairCipher p{message, key};
 
     std::string encrypted{p.Encrypt()};

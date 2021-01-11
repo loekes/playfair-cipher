@@ -114,6 +114,9 @@ void PlayfairCipher::InitializeMessage(const std::string& message) {
 
     if(m_FormattedKeyword.find('j') != std::string::npos && m_FormattedKeyword.find('i') != std::string::npos) {
         //if keyword contains both i and j, do nothing
+        std::replace_if(tmpMessage.begin(), tmpMessage.end(), [](char c) {
+            return c == 'z';
+        }, 'j');
     } else if(m_FormattedKeyword.find('j') != std::string::npos) {
         //otherwise replace all j characters with an i
         std::replace_if(tmpMessage.begin(), tmpMessage.end(), [](char c) {
@@ -156,6 +159,14 @@ void PlayfairCipher::InitializeMessage(const std::string& message) {
 /// <summary>Initializes the 5x5 Polybius Square based on the keyword</summary>
 /// <param name="keyword">the keyword used to encrypt/decrypt</param>
 void PlayfairCipher::InitializePolybiusSquare(const std::string& keyword) {
+    //check if keywords contains i, j and z
+    std::string sortedKeyword{keyword};
+    std::string illegalCombo{"ijz"};
+    std::sort(sortedKeyword.begin(), sortedKeyword.end());
+    if(std::includes(sortedKeyword.begin(), sortedKeyword.end(), illegalCombo.begin(), illegalCombo.end()) == true) {
+        throw(std::invalid_argument("The keyword cannot contain i, j and z at the same time"));
+    }
+
     //remove double letters from keyword
     std::string formattedKeyword{};
     std::for_each(keyword.begin(), keyword.end(), [&formattedKeyword](char c){ 
