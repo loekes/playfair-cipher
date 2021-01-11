@@ -3,8 +3,8 @@
 #include "PlayfairCipher.h"
 
 int main() {
-    std::string key{"death"};
-    std::string message{"LABOULAYE LADY WILL LEAD TO CIBOLA TEMPLES OF GOLD"};
+    std::string key{"jarthur"};
+    std::string message{"jay am cool!"};
     PlayfairCipher p{message, key};
 
     std::string encrypted{p.Encrypt()};
@@ -16,4 +16,6 @@ int main() {
     std::cout << "Key:\t\t\t" << key << "\n";
     std::cout << "Encrypted:\t\t" << encrypted << "\n";
     std::cout << "Decrypted:\t\t" << decrypted << "\n";
+    std::cout << "Polybius Square:\n";
+    p.PrintPolybiusSquare(); 
 }
