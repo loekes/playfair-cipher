@@ -24,6 +24,8 @@ class PlayfairCipher{
         void InitializePolybiusSquare(const std::string& keyword);
         std::string Run(Mode mode) const;
 
+        void SanitizeString(std::string& string);
+
         int GetRow(int index) const;
         int GetColumn(int index) const;
         int GetIndex(int row, int column) const;

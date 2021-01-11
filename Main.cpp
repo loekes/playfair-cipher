@@ -3,8 +3,8 @@
 #include "PlayfairCipher.h"
 
 int main() {
-    std::string key{"zajrthur"};
-    std::string message{"jay am cool!"};
+    std::string key{"Emile"};
+    std::string message{"Emile gaat twintig op twintig hebben op al zijn examens!"};
     
     PlayfairCipher p{message, key};
 

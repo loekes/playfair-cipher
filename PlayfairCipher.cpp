@@ -102,15 +102,7 @@ void PlayfairCipher::PrintPolybiusSquare() const {
 void PlayfairCipher::InitializeMessage(const std::string& message) {
     std::string tmpMessage{message};
     
-    //convert to lower case
-    std::transform(tmpMessage.begin(), tmpMessage.end(), tmpMessage.begin(), [](char c){ 
-            return std::tolower(c); 
-    });
-
-    //remove non-alpha characters
-    tmpMessage.erase(std::remove_if(tmpMessage.begin(), tmpMessage.end(), [](char c) {
-        return !(std::isalpha(c));
-    }), tmpMessage.end());
+    SanitizeString(tmpMessage);
 
     if(m_FormattedKeyword.find('j') != std::string::npos && m_FormattedKeyword.find('i') != std::string::npos) {
         //if keyword contains both i and j, do nothing
@@ -159,8 +151,12 @@ void PlayfairCipher::InitializeMessage(const std::string& message) {
 /// <summary>Initializes the 5x5 Polybius Square based on the keyword</summary>
 /// <param name="keyword">the keyword used to encrypt/decrypt</param>
 void PlayfairCipher::InitializePolybiusSquare(const std::string& keyword) {
+    std::string tmpKeyword{keyword};
+
+    SanitizeString(tmpKeyword);
+
     //check if keywords contains i, j and z
-    std::string sortedKeyword{keyword};
+    std::string sortedKeyword{tmpKeyword};
     std::string illegalCombo{"ijz"};
     std::sort(sortedKeyword.begin(), sortedKeyword.end());
     if(std::includes(sortedKeyword.begin(), sortedKeyword.end(), illegalCombo.begin(), illegalCombo.end()) == true) {
@@ -169,7 +165,7 @@ void PlayfairCipher::InitializePolybiusSquare(const std::string& keyword) {
 
     //remove double letters from keyword
     std::string formattedKeyword{};
-    std::for_each(keyword.begin(), keyword.end(), [&formattedKeyword](char c){ 
+    std::for_each(tmpKeyword.begin(), tmpKeyword.end(), [&formattedKeyword](char c){ 
         if(std::find(formattedKeyword.begin(), formattedKeyword.end(), c) == formattedKeyword.end()) {
             formattedKeyword.push_back(c);
         }
@@ -203,6 +199,20 @@ void PlayfairCipher::InitializePolybiusSquare(const std::string& keyword) {
             m_PolybiusSquare.push_back(c);
         }
     });
+}
+
+/// <summary>Sanitizes a string by making it lower case and removing all non-alpha characters</summary>
+/// <param name="string">the string to sanitize</param>
+void PlayfairCipher::SanitizeString(std::string& string) {
+    //convert to lower case
+    std::transform(string.begin(), string.end(), string.begin(), [](char c){ 
+            return std::tolower(c); 
+    });
+
+    //remove non-alpha characters
+    string.erase(std::remove_if(string.begin(), string.end(), [](char c) {
+        return !(std::isalpha(c));
+    }), string.end());
 }
 
 /// <summary>Converts a vector index to a row number on the 5x5 Polybius Square</summary>
