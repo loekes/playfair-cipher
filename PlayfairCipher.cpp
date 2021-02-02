@@ -115,7 +115,7 @@ void PlayfairCipher::InitializeMessage(const std::string& message) {
             return c == 'i';
         }, 'j');
         
-    } else if(m_FormattedKeyword.find('i') != std::string::npos) {
+    } else {
         std::replace_if(tmpMessage.begin(), tmpMessage.end(), [](char c) {
             return c == 'j';
         }, 'i');
@@ -177,10 +177,11 @@ void PlayfairCipher::InitializePolybiusSquare(const std::string& keyword) {
     std::copy(formattedKeyword.begin(), formattedKeyword.end(), m_PolybiusSquare.begin());
     m_FormattedKeyword = formattedKeyword;
 
+    std::cout << m_FormattedKeyword;
+
     //generate a full alphabet
     std::vector<char> alphabet(26);
     std::iota(alphabet.begin(), alphabet.end(), int('a'));
-
     
     if(formattedKeyword.find('j') != std::string::npos && formattedKeyword.find('i') != std::string::npos) {
         //remove z if bot i qnd j are part of the keyword
@@ -188,7 +189,7 @@ void PlayfairCipher::InitializePolybiusSquare(const std::string& keyword) {
     } else if(formattedKeyword.find('j') != std::string::npos){
         //remove i if j is part of the keyword
         alphabet.erase(std::remove(alphabet.begin(), alphabet.end(), 'i'), alphabet.end());
-    } else if(formattedKeyword.find('i') != std::string::npos) {
+    } else {
         //remove j if i is part of the keyword
         alphabet.erase(std::remove(alphabet.begin(), alphabet.end(), 'j'), alphabet.end());
     }
@@ -199,6 +200,8 @@ void PlayfairCipher::InitializePolybiusSquare(const std::string& keyword) {
             m_PolybiusSquare.push_back(c);
         }
     });
+
+    PrintPolybiusSquare();
 }
 
 /// <summary>Sanitizes a string by making it lower case and removing all non-alpha characters</summary>
